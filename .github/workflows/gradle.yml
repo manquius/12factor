@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build producer:
+  build_producer:
 
     runs-on: ubuntu-latest
     defaults:
@@ -28,7 +28,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-  build consumer:
+  build_consumer:
 
     runs-on: ubuntu-latest
     defaults:
