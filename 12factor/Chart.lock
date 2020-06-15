@@ -1,0 +1,9 @@
+dependencies:
+- name: redis-ha
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 4.4.4
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.2.0
+digest: sha256:336783d0acbe3ed2598b2091e94f4775367d030cd4e0bdc928dd3dea4c04d254
+generated: "2020-06-11T16:42:25.525072-03:00"
