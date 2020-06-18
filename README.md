@@ -1,4 +1,10 @@
-# 12factor  [![Gradle](https://github.com/manquius/12factor/workflows/Java%20CI%20with%20Gradle/badge.svg)]() [![Helm](https://github.com/manquius/12factor/workflows/Lint%20and%20Test%20Charts/badge.svg)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+   <img src="12Factor-App-W.png" width="672" height="223" />
+</p>
+
+[![Gradle](https://github.com/manquius/12factor/workflows/Java%20CI%20with%20Gradle/badge.svg)]() [![Helm](https://github.com/manquius/12factor/workflows/Lint%20and%20Test%20Charts/badge.svg)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+# 12factor 
 
 ## Table of Contents
 - [Introduction](#introduction)
