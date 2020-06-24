@@ -21,7 +21,7 @@
 ## Introduction
 12factor demo is a simplified example project to demonstrate the advantages of [twelve-factor](https://12factor.net/) methodology on cloud based applications design.
 
-It consist in two frontend [RESTful](https://restfulapi.net/) services to produce and consume to a [Kafka](https://kafka.apache.org/) backend. It also includes a Redis service as a circuit breaker for High Availability.
+It consist in two frontend [RESTful](https://restfulapi.net/) services to produce and consume to a backend. By default it uses a [Kafka](https://kafka.apache.org/) backend, using a Redis service as a circuit breaker for High Availability.
 
 It is build to be installed on a [Kubernetes](https://kubernetes.io/) environment using [Helm](https://helm.sh/).
 
