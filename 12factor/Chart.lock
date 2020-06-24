@@ -5,5 +5,8 @@ dependencies:
 - name: kafka
   repository: https://charts.bitnami.com/bitnami
   version: 11.2.0
-digest: sha256:6c4018a6cf3b5a08d761dc8f68db8fba1f2e947debcf35032207caf00159b9db
-generated: "2020-06-24T11:59:15.585109-03:00"
+- name: pulsar
+  repository: https://cnieg.github.io/helm-charts
+  version: 1.0.5
+digest: sha256:d134bc19d348b7d40a9d8aa42e0d0f8a898885046405403b9326952c88d12929
+generated: "2020-06-24T12:30:48.855487-03:00"

@@ -29,3 +29,7 @@ dependencies:
     version: 11.2.0
     repository: https://charts.bitnami.com/bitnami
     alias: kafka
+  - name: pulsar
+    version: 1.0.5
+    repository: https://cnieg.github.io/helm-charts
+    alias: pulsar
