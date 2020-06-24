@@ -159,6 +159,10 @@ Fernando Ezequiel Mancuso (:bowtie:Manquius)
 ## Collaboators
 * Guido Martin Cremona
     * https://github.com/gmcremona
+    
+
+* Rodrigo Liberal
+    * https://github.com/rliberal
 
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
