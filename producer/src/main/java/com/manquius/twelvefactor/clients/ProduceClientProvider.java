@@ -10,7 +10,7 @@ public class ProduceClientProvider {
 
     public ProduceClient getClient() throws ClientCreationException {
         if (null == adapter) {
-            final String clientString = ofNullable(System.getenv("PRODUCE_CLIENT")).orElse("KAFKA/REDIS");
+            final String clientString = ofNullable(System.getenv("PRODUCE_CLIENT")).orElse("PULSAR/REDIS");
             if (clientString.contains("/")) {
                 List<ProduceClient> adapters = new ArrayList<>();
                 for (String adapterName : clientString.split("/")) {
