@@ -12,7 +12,7 @@ public class PulsarProduceClient implements ProduceClient {
     public PulsarProduceClient() throws ClientCreationException {
         String host = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_HOST")).orElse("localhost");
         String port = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_PORT_PULSAR")).orElse("6650");
-        String pulsarBrokerRootUrl = "pulsar+ssl://" + host + ":" + port;
+        String pulsarBrokerRootUrl = "pulsar://" + host + ":" + port;
         try {
             client = PulsarClient.builder().serviceUrl(pulsarBrokerRootUrl).build();
             builder = client.newProducer(Schema.STRING);

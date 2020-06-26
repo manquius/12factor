@@ -67,6 +67,15 @@ The Kubernetes Dashboard will ask for a token to access. You can get it executin
 kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
 ```
 
+#### Pulsar Admin API
+In order to access [Pulsar Admin API](https://pulsar.apache.org/docs/v2.0.1-incubating/admin-api/overview/) you must execute
+```bash
+kubectl proxy
+```
+Then you can access using the following URL:
+
+http://localhost:8001/api/v1/namespaces/default/services/http:twelvefactor-pulsar-proxy:http/proxy/admin/
+
 ## Installation
 Before the first time you install the chart:
 ```bash
