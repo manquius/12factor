@@ -1,7 +1,5 @@
 package com.manquius.twelvefactor.client;
 
-import java.util.ArrayList;
-import java.util.List;
 import static java.util.Optional.ofNullable;
 
 public class ConsumeClientProvider {
@@ -11,21 +9,28 @@ public class ConsumeClientProvider {
     public ConsumeClient getClient() throws ClientCreationException {
         if (null == adapter) {
             final String clientString = ofNullable(System.getenv("CONSUME_CLIENT")).orElse("PULSAR");
-            adapter = getClientByName(clientString);
+            adapter = Adapter.getClientByName(clientString);
         }
         return adapter;
     }
 
-    private ConsumeClient getClientByName(String clientString) throws ClientCreationException {
-        if(clientString.equalsIgnoreCase("KAFKA")) {
-            adapter = new KafkaConsumeClient();
+
+    enum Adapter {
+        KAFKA,
+        REDIS,
+        PULSAR;
+
+        private static ConsumeClient getClientByName(final String clientString) throws ClientCreationException {
+            switch(Adapter.valueOf(clientString)) {
+                case PULSAR:
+                    return new PulsarConsumeClient();
+                case KAFKA:
+                    return new KafkaConsumeClient();
+                case REDIS:
+                    return new RedisConsumeClient();
+                default:
+                    throw new ClientCreationException("Invalid CONSUME_CLIENT value: " + clientString);
+            }
         }
-        if(clientString.equalsIgnoreCase("REDIS")) {
-            adapter = new RedisConsumeClient();
-        }
-        if(clientString.equalsIgnoreCase("PULSAR")) {
-            adapter = new PulsarConsumeClient();
-        }
-        return adapter;
     }
 }

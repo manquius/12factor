@@ -16,7 +16,8 @@ class PulsarConsumeClient implements ConsumeClient {
     public PulsarConsumeClient() throws ClientCreationException {
         String host = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_HOST")).orElse("localhost");
         String port = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_PORT_PULSAR")).orElse("6650");
-        String pulsarBrokerRootUrl = "pulsar://" + host + ":" + port;
+        String protocol = ofNullable(System.getenv("PULSAR_PROTO")).orElse("pulsar");
+        String pulsarBrokerRootUrl = protocol + "://" + host + ":" + port;
         try {
             client = PulsarClient.builder().serviceUrl(pulsarBrokerRootUrl).build();
             builder = client.newConsumer(Schema.STRING);
@@ -26,7 +27,7 @@ class PulsarConsumeClient implements ConsumeClient {
     }
 
     @Override
-    public List<String> consume(String topic) throws ConsumeException {
+    public List<String> consume(final String topic) throws ConsumeException {
         try{
             Consumer<String> consumer = builder.topic(topic).subscriptionName("12factor").subscribe();
             Messages<String> messages = consumer.batchReceive();

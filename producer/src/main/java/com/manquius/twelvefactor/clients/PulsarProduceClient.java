@@ -12,7 +12,8 @@ public class PulsarProduceClient implements ProduceClient {
     public PulsarProduceClient() throws ClientCreationException {
         String host = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_HOST")).orElse("localhost");
         String port = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_PORT_PULSAR")).orElse("6650");
-        String pulsarBrokerRootUrl = "pulsar://" + host + ":" + port;
+        String protocol = ofNullable(System.getenv("PULSAR_PROTO")).orElse("pulsar");
+        String pulsarBrokerRootUrl = protocol + "://" + host + ":" + port;
         try {
             client = PulsarClient.builder().serviceUrl(pulsarBrokerRootUrl).build();
             builder = client.newProducer(Schema.STRING);
@@ -22,7 +23,7 @@ public class PulsarProduceClient implements ProduceClient {
     }
 
     @Override
-    public void produce(String topic, String message) throws ProduceException {
+    public void produce(final String topic, final String message) throws ProduceException {
         try(Producer<String> producer = builder.topic(topic).create()) {
             producer.send(message);
         } catch (PulsarClientException e) {
