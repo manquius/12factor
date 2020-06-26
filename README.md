@@ -2,7 +2,7 @@
    <img src="12Factor-App-W.png" width="672" height="223" />
 </p>
 
-[![Gradle](https://github.com/manquius/12factor/workflows/Java%20CI%20with%20Gradle/badge.svg)]() [![Helm](https://github.com/manquius/12factor/workflows/Lint%20and%20Test%20Charts/badge.svg)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Gradle](https://github.com/manquius/12factor/workflows/Java%20CI%20with%20Gradle/badge.svg)]() [![Helm](https://github.com/manquius/12factor/workflows/Lint%20and%20Test%20Charts/badge.svg)]() [![Docker](https://github.com/manquius/12factor/workflows/Docker/badge.svg)]() [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # 12factor 
 
@@ -16,6 +16,7 @@
 - [Start your own 12factor project](#start-your-own-12factor-project)
 - [Author](#author)
 - [Collaboators](#collaboators)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
@@ -165,13 +166,27 @@ Fernando Ezequiel Mancuso (:bowtie:Manquius)
 * https://github.com/manquius
 * manquius@gmail.com
 
-## Collaboators
+## Collaborators
 * Guido Martin Cremona
     * https://github.com/gmcremona
     
 
 * Rodrigo Liberal
     * https://github.com/rliberal
+
+## Contributing
+
+### Branch naming convention
+Docker images version tags are taken from branch names, so the branch name must match the expected version for the image:
+
+#### Example:
+Branch 0.0.1 will generate the images:
+* manquius/12factor-producer:0.0.1
+* manquius/12factor-consumer:0.0.1
+
+The same versions must be updated on: 
+* [producer.yaml](https://github.com/manquius/12factor/blob/master/12factor/templates/producer.yaml)
+* [consumer.yaml](https://github.com/manquius/12factor/blob/master/12factor/templates/consumer.yaml)
 
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
