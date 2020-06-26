@@ -16,6 +16,7 @@
 - [Start your own 12factor project](#start-your-own-12factor-project)
 - [Author](#author)
 - [Collaboators](#collaboators)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
@@ -156,13 +157,27 @@ Fernando Ezequiel Mancuso (:bowtie:Manquius)
 * https://github.com/manquius
 * manquius@gmail.com
 
-## Collaboators
+## Collaborators
 * Guido Martin Cremona
     * https://github.com/gmcremona
     
 
 * Rodrigo Liberal
     * https://github.com/rliberal
+
+## Contributing
+
+### Branch naming convention
+Docker images version tags are taken from branch names, so the branch name must match the expected version for the image:
+
+#### Example:
+Branch 0.0.1 will generate the images:
+* manquius/12factor-producer:0.0.1
+* manquius/12factor-consumer:0.0.1
+
+The same versions must be updated on: 
+* [producer.yaml](https://github.com/manquius/12factor/blob/master/12factor/templates/producer.yaml)
+* [consumer.yaml](https://github.com/manquius/12factor/blob/master/12factor/templates/consumer.yaml)
 
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
