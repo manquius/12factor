@@ -32,7 +32,7 @@ jobs:
             zookeeper:
               pdb:
                 usePolicy: false
-            broker
+            broker:
               pdb:
                 usePolicy: false
       env:
