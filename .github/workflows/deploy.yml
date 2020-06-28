@@ -22,6 +22,6 @@ jobs:
         version: '${{ github.sha }}'
         chart: '12factor'
         release: '12factor'
-        namespace: 'default'
+        namespace: 'manquius'
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
