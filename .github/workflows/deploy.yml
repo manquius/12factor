@@ -26,17 +26,8 @@ jobs:
         namespace: 'manquius'
         values: |
           pulsar:
-            bookkeeper:
-              pdb:
-                usePolicy: false
-            zookeeper:
-              pdb:
-                usePolicy: false
-            broker:
-              pdb:
-                usePolicy: false
-            proxy:
-              pdb:
-                usePolicy: false
+            enabled:false
+          kafka:
+            enabled:false
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
