@@ -21,5 +21,6 @@ jobs:
         secrets: '${{ toJSON(secrets) }}'
         version: '${{ github.sha }}'
         chart: '12factor'
+        release: '12factor'
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
