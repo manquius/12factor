@@ -35,5 +35,8 @@ jobs:
             broker:
               pdb:
                 usePolicy: false
+            proxy:
+              pdb:
+                usePolicy: false
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
