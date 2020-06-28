@@ -26,8 +26,8 @@ jobs:
         namespace: 'manquius'
         values: |
           pulsar:
-            enabled:false
+            enabled: false
           kafka:
-            enabled:false
+            enabled: false
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
