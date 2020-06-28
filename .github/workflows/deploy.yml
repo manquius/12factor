@@ -24,5 +24,16 @@ jobs:
         chart: '12factor'
         release: '12factor'
         namespace: 'manquius'
+        values: |
+          pulsar:
+            bookkeeper:
+              pdb:
+                usePolicy: false
+            zookeeper:
+              pdb:
+                usePolicy: false
+            broker
+              pdb:
+                usePolicy: false
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
