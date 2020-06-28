@@ -17,6 +17,7 @@ jobs:
       # configuration for the job here is very minimal.
       uses: 'deliverybot/helm@master'
       with:
+        helm: 'helm3'
         token: '${{ github.token }}'
         secrets: '${{ toJSON(secrets) }}'
         version: '${{ github.sha }}'
