@@ -147,7 +147,7 @@ public class CircuitBreakerProduceClient implements ProduceClient {
             try {
                 client.close();
             } catch (Exception e) {
-                //Nothing to do
+                LOG.warn("Client could not be closed.", e);
             }
         });
     }
