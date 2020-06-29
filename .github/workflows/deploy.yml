@@ -29,5 +29,8 @@ jobs:
             enabled: false
           kafka:
             enabled: false
+          redis: 
+            rbac:
+              create: false
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
