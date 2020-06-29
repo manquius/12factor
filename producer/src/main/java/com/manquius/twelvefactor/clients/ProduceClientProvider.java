@@ -10,30 +10,36 @@ public class ProduceClientProvider {
 
     public ProduceClient getClient() throws ClientCreationException {
         if (null == adapter) {
-            final String clientString = ofNullable(System.getenv("PRODUCE_CLIENT")).orElse("KAFKA/REDIS");
+            final String clientString = ofNullable(System.getenv("PRODUCE_CLIENT")).orElse("PULSAR/REDIS");
             if (clientString.contains("/")) {
                 List<ProduceClient> adapters = new ArrayList<>();
                 for (String adapterName : clientString.split("/")) {
-                    adapters.add(getClientByName(adapterName));
+                    adapters.add(Adapter.getClientByName(adapterName));
                 }
                 adapter = new CircuitBreakerProduceClient(adapters);
             } else {
-                getClientByName(clientString);
+                adapter = Adapter.getClientByName(clientString);
             }
         }
         return adapter;
     }
 
-    private ProduceClient getClientByName(String clientString) throws ClientCreationException {
-        if(clientString.equalsIgnoreCase("KAFKA")) {
-            adapter = new KafkaProduceClient();
+    enum Adapter {
+        KAFKA,
+        REDIS,
+        PULSAR;
+
+        private static ProduceClient getClientByName(final String clientString) throws ClientCreationException {
+            switch(Adapter.valueOf(clientString)) {
+                case PULSAR:
+                    return new PulsarProduceClient();
+                case KAFKA:
+                    return new KafkaProduceClient();
+                case REDIS:
+                    return new RedisProduceClient();
+                default:
+                    throw new ClientCreationException("Invalid PRODUCE_CLIENT value: " + clientString);
+            }
         }
-        if(clientString.equalsIgnoreCase("REDIS")) {
-            adapter = new RedisProduceClient();
-        }
-        if(clientString.equalsIgnoreCase("PULSAR")) {
-            adapter = new PulsarProduceClient();
-        }
-        return adapter;
     }
 }
