@@ -17,24 +17,17 @@ import java.util.List;
 
 import static java.util.Optional.ofNullable;
 
-/**
- * Implementation of {@link ProduceClient} that handles a Circuit Breaker mechanism among the provided alternatives.
- * It is the default {@link ProduceClient}.
- * It can be configured Using the following environment variables:
- * CIRCUIT_BREAKER_MAX_ATTEMPTS: Number of attempts to produce to one backing service before passing to the next one. Default: 10.
- * CIRCUIT_BREAKER_LEVEL_RESET_MS: Number of milliseconds to keep producing to a secondary backing service, before trying to produce to the previous one. Default: 10000.
- */
-public class CircuitBreakerProduceClient implements ProduceClient {
+public class CircuitBreakerConsumeClient implements ConsumeClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CircuitBreakerProduceClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CircuitBreakerConsumeClient.class);
 
     /**
-     * Max attempts to produce before move to next level of failover.
+     * Max attempts to consume before move to next level of failover.
      */
     private int maxAttempts;
 
     /**
-     * Number of millis to wait before try to produce to level 0 again.
+     * Number of millis to wait before try to consume from level 0 again.
      */
     private long levelResetMillis;
 
@@ -54,67 +47,67 @@ public class CircuitBreakerProduceClient implements ProduceClient {
     private int level = 0;
 
     /**
-     * Current attempts on failing productions.
+     * Current attempts on failing consuming.
      */
     private int attempts = 1;
 
-    protected final List<ProduceClient> clientAdapters;
+    protected final List<ConsumeClient> clientAdapters;
 
     /**
      * CircuitBreakerProduceClient contructor.
-     * @param adapters Ordered {@link List} of {@link ProduceClient} that will connect to backing services. The default will be the first one, and it will call the next ones when the previous fails.
-     *                 The max attempts to produce to a failing backing service is configured by CIRCUIT_BREAKER_MAX_ATTEMPTS environment variable. Default: 10.
-     *                 The time it will continue producing to a secondary backend before re-trying the previous one is configured by CIRCUIT_BREAKER_LEVEL_RESET_MS environment variable. Default:10000.
+     * @param adapters Ordered {@link List} of {@link ConsumeClient} that will connect to backing services. The default will be the first one, and it will call the next ones when the previous fails.
+     *                 The max attempts to consume from a failing backing service is configured by CIRCUIT_BREAKER_MAX_ATTEMPTS environment variable. Default: 10.
+     *                 The time it will continue consuming from a secondary backend before re-trying the previous one is configured by CIRCUIT_BREAKER_LEVEL_RESET_MS environment variable. Default:10000.
      */
-    public CircuitBreakerProduceClient(final List<ProduceClient> adapters) {
+    public CircuitBreakerConsumeClient(final List<ConsumeClient> adapters) {
         try {
-            maxAttempts = Integer.valueOf(ofNullable("CIRCUIT_BREAKER_MAX_ATTEMPTS").orElse("10"));
-        } catch(NumberFormatException e) {
+            maxAttempts = Integer.parseInt(ofNullable(System.getenv("CIRCUIT_BREAKER_MAX_ATTEMPTS")).orElse("10"));
+        } catch (NumberFormatException e) {
             maxAttempts = 10;
         }
         try {
-        levelResetMillis = Long.valueOf(ofNullable("CIRCUIT_BREAKER_LEVEL_RESET_MS").orElse("10000"));
-        } catch(NumberFormatException e) {
+            levelResetMillis = Long.parseLong(ofNullable(System.getenv("CIRCUIT_BREAKER_LEVEL_RESET_MS")).orElse("10000"));
+        } catch (NumberFormatException e) {
             levelResetMillis = 10000;
         }
         this.clientAdapters = adapters;
     }
 
     /**
-     * Produce method implementation with Circuit Breaker mechanism.
-     * @param topic where the message will be produced.
-     * @param message to be produced in the topic
-     * @throws ProduceException if the message could not be produced.
+     * Consume method implementation with Circuit Breaker mechanism.
+     * @param topic from where the message will be consumed.
+     * @return
+     * @throws ConsumeException if the message could not be produced.
      */
     @Override
-    public void produce(String topic, String message) throws ProduceException {
-        boolean sent = false;
+    public List<String> consume(String topic) throws ConsumeException {
+        List<String> messages = null;
         if (level > 0) {
             checkResetTime();
         }
-        while (!sent && level < clientAdapters.size()) {
-            sent = tryToProduce(topic, message);
+        while (messages == null && level < clientAdapters.size()) {
+            messages = tryToConsume(topic);
         }
-        if (!sent) {
-            LOG.error("Message could not be sent to any backend");
-            throw new ProduceException("Message could not be sent to any backend: " + message);
+        if (messages == null) {
+            LOG.error("Message could not be received from any backend");
+            throw new ConsumeException("Message could not be consumed from any backend");
         }
+        return messages;
     }
 
 
     /**
      * Tries to produce a request to the current background service level.
      *
-     * @return boolean indicating if the message was produced successfully to any backing service.
+     * @return boolean
      */
-    private boolean tryToProduce(String topic, String message) {
-        boolean sent = false;
+    private List<String> tryToConsume(String topic) {
+        List<String> messages = null;
         int currentLevel = level;
-        while (!sent && attempts <= maxAttempts && currentLevel == level) {
+        while (messages == null && attempts <= maxAttempts && currentLevel == level) {
             try {
-                ProduceClient adapter = clientAdapters.get(level);
-                adapter.produce(topic, message);
-                sent = true;
+                ConsumeClient adapter = clientAdapters.get(level);
+                messages = adapter.consume(topic);
             } catch (Exception e) {
                 if (attempts < maxAttempts) {
                     LOG.error("Error trying to produce. Attempt: " + attempts);
@@ -126,7 +119,7 @@ public class CircuitBreakerProduceClient implements ProduceClient {
                 }
             }
         }
-        return sent;
+        return messages;
     }
 
     /**
