@@ -10,7 +10,8 @@
 
 package com.manquius.twelvefactor.api;
 
-import com.manquius.twelvefactor.clients.*;
+import com.manquius.twelvefactor.clients.ConsumeClientProvider;
+import com.manquius.twelvefactor.clients.ConsumeClient;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;

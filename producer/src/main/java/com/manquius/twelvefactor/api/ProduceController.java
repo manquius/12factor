@@ -9,7 +9,8 @@
 
 package com.manquius.twelvefactor.api;
 
-import com.manquius.twelvefactor.clients.*;
+import com.manquius.twelvefactor.clients.ProduceClientProvider;
+import com.manquius.twelvefactor.clients.ProduceClient;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;

@@ -11,6 +11,8 @@
 package com.manquius.twelvefactor.clients;
 
 import org.apache.pulsar.client.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import static java.util.Optional.ofNullable;
  */
 class PulsarConsumeClient implements ConsumeClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PulsarConsumeClient.class);
     private final PulsarClient client;
     private final ConsumerBuilder<String> builder;
 
@@ -38,7 +41,7 @@ class PulsarConsumeClient implements ConsumeClient {
             client = PulsarClient.builder().serviceUrl(pulsarBrokerRootUrl).build();
             builder = client.newConsumer(Schema.STRING);
         } catch (PulsarClientException e) {
-            throw new ClientCreationException(e);
+            throw new ClientCreationException("Error creating pulsar client.", e);
         }
     }
 
@@ -71,7 +74,7 @@ class PulsarConsumeClient implements ConsumeClient {
         try {
             client.close();
         } catch (Exception e) {
-            //Nothing to do
+            LOG.warn("PulsarConsumeClient could not be closed");
         }
     }
 }

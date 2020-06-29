@@ -10,6 +10,8 @@
 package com.manquius.twelvefactor.clients;
 
 import org.apache.pulsar.client.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Optional.ofNullable;
 
@@ -21,6 +23,7 @@ public class PulsarProduceClient implements ProduceClient, AutoCloseable {
 
     private final PulsarClient client;
     private final ProducerBuilder<String> builder;
+    private static final Logger LOG = LoggerFactory.getLogger(PulsarProduceClient.class);
 
     public PulsarProduceClient() throws ClientCreationException {
         String host = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_HOST")).orElse("localhost");
@@ -55,7 +58,7 @@ public class PulsarProduceClient implements ProduceClient, AutoCloseable {
         try {
             client.close();
         } catch (PulsarClientException e) {
-            //Nothing to do
+            LOG.warn("Error closing Pulsar Client", e);
         }
     }
 }

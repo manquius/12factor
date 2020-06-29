@@ -20,6 +20,8 @@ import static java.util.Optional.ofNullable;
 public class CircuitBreakerConsumeClient implements ConsumeClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(CircuitBreakerConsumeClient.class);
+    public static final int DEFAULT_LEVEL_RESET_MILLIS = 10000;
+    public static final int DEFAULT_MAX_ATTEMPTS = 10;
 
     /**
      * Max attempts to consume before move to next level of failover.
@@ -63,12 +65,12 @@ public class CircuitBreakerConsumeClient implements ConsumeClient {
         try {
             maxAttempts = Integer.parseInt(ofNullable(System.getenv("CIRCUIT_BREAKER_MAX_ATTEMPTS")).orElse("10"));
         } catch (NumberFormatException e) {
-            maxAttempts = 10;
+            maxAttempts = DEFAULT_MAX_ATTEMPTS;
         }
         try {
             levelResetMillis = Long.parseLong(ofNullable(System.getenv("CIRCUIT_BREAKER_LEVEL_RESET_MS")).orElse("10000"));
         } catch (NumberFormatException e) {
-            levelResetMillis = 10000;
+            levelResetMillis = DEFAULT_LEVEL_RESET_MILLIS;
         }
         this.clientAdapters = adapters;
     }
@@ -89,7 +91,6 @@ public class CircuitBreakerConsumeClient implements ConsumeClient {
             messages = tryToConsume(topic);
         }
         if (messages == null) {
-            LOG.error("Message could not be received from any backend");
             throw new ConsumeException("Message could not be consumed from any backend");
         }
         return messages;
@@ -140,7 +141,7 @@ public class CircuitBreakerConsumeClient implements ConsumeClient {
             try {
                 client.close();
             } catch (Exception e) {
-                //Nothing to do
+                LOG.warn("ConsumeClient could not be closed");
             }
         });
     }

@@ -28,10 +28,14 @@ import static java.util.Optional.ofNullable;
  */
 public class KafkaProduceClient implements ProduceClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaProduceClient.class);
+
 
     private final KafkaProducer<String, String> producer;
     private final Callback callback = (metadata, exception) -> {
-        //Nothing to do.
+        if(exception != null) {
+            LOG.error("Error producing message to Kafka.", exception);
+        }
     };
 
     /**
