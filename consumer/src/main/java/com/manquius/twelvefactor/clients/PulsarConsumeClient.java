@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2020. Fernando Ezequiel Mancuso (Manquius).
+ * Copyright (c) 2020. Fernando Ezequiel Mancuso (Manquius)
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -9,56 +10,76 @@
 
 package com.manquius.twelvefactor.clients;
 
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.ConsumerBuilder;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Optional.ofNullable;
 
 /**
- * {@link ProduceClient} implementation for Pulsar backing service.
- *
+ * {@link ConsumeClient} implementation for a Pulsar Backing Service.
  */
-public class PulsarProduceClient implements ProduceClient, AutoCloseable {
+class PulsarConsumeClient implements ConsumeClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PulsarConsumeClient.class);
     private final PulsarClient client;
-    private final ProducerBuilder<String> builder;
-    private static final Logger LOG = LoggerFactory.getLogger(PulsarProduceClient.class);
+    private final ConsumerBuilder<String> builder;
 
-    public PulsarProduceClient() throws ClientCreationException {
+    /**
+     * PulsarConsumeClient constructor
+     * @throws ClientCreationException
+     */
+    public PulsarConsumeClient() throws ClientCreationException {
         String host = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_HOST")).orElse("localhost");
         String port = ofNullable(System.getenv("TWELVEFACTOR_PULSAR_PROXY_SERVICE_PORT_PULSAR")).orElse("6650");
         String protocol = ofNullable(System.getenv("PULSAR_PROTO")).orElse("pulsar");
         String pulsarBrokerRootUrl = protocol + "://" + host + ":" + port;
         try {
             client = PulsarClient.builder().serviceUrl(pulsarBrokerRootUrl).build();
-            builder = client.newProducer(Schema.STRING);
+            builder = client.newConsumer(Schema.STRING);
         } catch (PulsarClientException e) {
-            throw new ClientCreationException(e);
+            throw new ClientCreationException("Error creating pulsar client.", e);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Consume method implementation for Pulsar backing service.
+     * @param topic from where the message will be consumed.
+     * @throws ConsumeException if the message could not be consumed.
+     * @return {@link List} of {@link String} messages
      */
     @Override
-    public void produce(final String topic, final String message) throws ProduceException {
-        try(Producer<String> producer = builder.topic(topic).create()) {
-            producer.send(message);
+    public List<String> consume(final String topic) throws ConsumeException {
+        try{
+            Consumer<String> consumer = builder.topic(topic).subscriptionName("12factor").subscribe();
+            Messages<String> messages = consumer.batchReceive();
+            consumer.acknowledge(messages);
+            consumer.close();
+            List<String> result = new ArrayList<>();
+            messages.forEach(stringMessage -> result.add(stringMessage.getValue()));
+            return result;
         } catch (PulsarClientException e) {
-            throw new ProduceException(e);
+            throw new ConsumeException("Error consuming from Pulsar Topic: " + topic, e);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Closes Pulsar client.
      */
     @Override
     public void close() {
         try {
             client.close();
-        } catch (PulsarClientException e) {
-            LOG.warn("Error closing Pulsar Client", e);
+        } catch (Exception e) {
+            LOG.warn("PulsarConsumeClient could not be closed");
         }
     }
 }

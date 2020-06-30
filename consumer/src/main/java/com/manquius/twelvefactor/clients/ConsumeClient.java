@@ -8,19 +8,21 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.manquius.twelvefactor;
+package com.manquius.twelvefactor.clients;
 
-import io.micronaut.runtime.Micronaut;
+import java.util.List;
 
 /**
- * Consume Service Main Class.
+ * Client interface. It must produce to a backing Service.
  */
-public class Application {
+public interface ConsumeClient extends AutoCloseable{
 
     /**
-     * Consume Service Main Method.
+     * Consume method implementation.
+     * @param topic from where the message will be consumed.
+     * @return {@link List} of {@link String} messages
+     * @throws ConsumeException if the message could not be consumed.
      */
-    public static void main(String[] args) {
-        Micronaut.run(Application.class);
-    }
+    List<String> consume(String topic) throws ConsumeException;
+
 }
