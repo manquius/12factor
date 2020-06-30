@@ -10,7 +10,12 @@
 
 package com.manquius.twelvefactor.clients;
 
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.ConsumerBuilder;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
