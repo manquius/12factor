@@ -1,0 +1,36 @@
+name: 'Deploy'
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  deployment:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - name: 'Checkout'
+      uses: 'actions/checkout@v1'
+
+    - name: 'Deploy'
+      # Parameters are pulled directly from the GitHub deployment event so the
+      # configuration for the job here is very minimal.
+      uses: 'deliverybot/helm@master'
+      with:
+        helm: 'helm3'
+        token: '${{ github.token }}'
+        secrets: '${{ toJSON(secrets) }}'
+        version: '${{ github.sha }}'
+        chart: '12factor'
+        release: 'twelvefactor'
+        namespace: 'manquius'
+        values: |
+          pulsar:
+            enabled: false
+          kafka:
+            enabled: false
+          replicaCount: 1
+          serviceAccount:
+            create: false
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
